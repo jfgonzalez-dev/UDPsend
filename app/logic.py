@@ -2,14 +2,17 @@ import socket
 from datetime import datetime
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+"""The UDP socket instance used for transmitting packets."""
 
 UDP_IP = '192.168.4.1'
+"""IP address it will send the UDP packet to."""
 UDP_PORT = 12345
+"""Port it will send the UDP packet to."""
 
 
 def main():
     """
-    Función principal.
+    Main function.
     """
     horarios_data_file = [
         {'time': '09:30', 'rep': '45s', 'vol': '5'},
@@ -30,7 +33,7 @@ def main():
 
 def udp_send(msg):
     """
-    Manda mensaje UDP.
+    Sends the UDP packet.
 
     Args:
         msg (str): The message to be sent.
@@ -43,15 +46,15 @@ def udp_send(msg):
 
 def gen_cal(st_year, st_month, fest):
     """
-    Genera una lista de 12 meses en el formato adecuado, comenzando desde un mes y año específicos.
+    Generates a 12 months list using the correct format, starting from a specific month and year.
 
     Args:
-        st_year (int): Año de inicio.
-        st_month (int): Mes de inicio (1-12).
-        fest (list of dict): Días festivos.
+        st_year (int): Starting year.
+        st_month (int): Starting month (1-12).
+        fest (list of dict): Not lective days.
 
     Returns:
-        List[str]: Lista de 12 cadenas de caracteres, cada una representando un mes.
+        list of str: List of 12 strings, each representing a month.
     """
     month_list = 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'CA', 'CB', 'CC'
     day_list = 'L', 'M', 'X', 'J', 'V', 'S', 'D'
@@ -87,26 +90,26 @@ def gen_cal(st_year, st_month, fest):
 
 def sort_time(timetable):
     """
-    Ordena el horario por la clave 'time' en orden ascendente.
+    Sort timetable using 'time' as key in ascendent order.
 
     Args:
-        timetable (list of dict): Lista de diccionarios con todos los datos del horario.
+        timetable (list of dict): Holds timetable data.
 
     Returns:
-        list of dict: Lista de diccionarios ordenada por la clave 'time'.
+        list of dict: Sorted using 'time' as key.
     """
     return sorted(timetable, key=lambda x: x['time'])
 
 
 def gen_time(timetable):
     """
-    Genera una tupla que contiene el horario y el número de tramos horarios en el formato adecuado.
+    Generates a tuple containing the formatted timetable and the number of time slots.
 
     Args:
-        timetable (list of dict): Lista de diccionarios con todos los datos del horario.
+        timetable (list of dict): List of dictionaries holding all timetable data.
 
     Returns:
-        Tuple[str, str]: Tupla de 2 cadenas de caracteres: el horario[0] y el nº de tramos[1].
+        tuple[str, str]: The formatted timetable [0] and the number of slots [1].
     """
     _time = [i['time'].replace(':', '').zfill(2) for i in sort_time(timetable)]
     _udp_time = 'H' + '-'.join(_time).ljust(104, '-')
@@ -115,13 +118,13 @@ def gen_time(timetable):
 
 def gen_rep(timetable):
     """
-    Genera una cadena con el tiempo de reproducción de cada tramo horario en el formato adecuado.
+    Generates a formatted string representing the playback duration for each time slot.
 
     Args:
-        timetable (list of dict): Lista de diccionarios con todos los datos del horario.
+        timetable (list of dict): List of dictionaries holding all timetable data.
 
     Returns:
-        str: Cadena de caracteres con el tiempo de reproducción de cada tramo horario.
+        str: The playback duration for each time slot, padded and joined.
     """
     _rep = [i['rep'].zfill(3) for i in sort_time(timetable)]
     return 'T' + '-'.join(_rep).ljust(83, "-")
@@ -129,13 +132,13 @@ def gen_rep(timetable):
 
 def gen_vol(timetable):
     """
-    Genera una cadena con el tiempo de reproducción de cada tramo horario en el formato adecuado.
+    Generates a formatted string representing the volume level for each time slot.
 
     Args:
-        timetable (list of dict): Lista de diccionarios con todos los datos del horario.
+        timetable (list of dict): List of dictionaries holding all timetable data.
 
     Returns:
-        str: Cadenas de caracteres con el tiempo de reproducción de cada tramo horario.
+        str: Formatted string with the volume level for each time slot.
     """
     _vol = [i['vol'].zfill(2) for i in sort_time(timetable)]
     return 'V' + '-'.join(_vol).ljust(62, '-')
@@ -143,13 +146,13 @@ def gen_vol(timetable):
 
 def gen_fol(folder):
     """
-    Genera una cadena con la carpeta de reproducción en el formato adecuado.
+    Generates a formatted string for the playback folder.
 
     Args:
-        folder (int): Número de la carpeta como cadena.
+        folder (int): Folder number.
 
     Returns:
-        str: Nombre de la carpeta formateado con una "F" al inicio y con un cero a la izquierda si es necesario.
+        str: The playback folder identifier (e.g., 'F01' to 'F99').
     """
     if 0 < int(folder) < 100:
         return f'F{str(folder).zfill(2)}'
@@ -161,12 +164,12 @@ def gen_fol(folder):
 
 def gen_now():
     """
-    Genera una cadena con la fecha y hora actual en el formato adecuado.
+    Generates a formatted string with the current date and time.
 
     Returns:
-        str: Cadena con el formato 'D-YYYY/MM/DD/HH/MM/SS' representando la fecha y hora actual.
+        str: The current date and time formatted as 'D-YYYY/MM/DD/HH/MM/SS'.
     """
-    return f'D-{datetime.now().strftime('%Y/%m/%d/%H/%M/%S')}'
+    return f"D-{datetime.now().strftime('%Y/%m/%d/%H/%M/%S')}"
 
 
 if __name__ == '__main__':

@@ -8,12 +8,15 @@ import shutil
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 
 app = Flask(__name__)
+"""The primary WSGI application instance for the Flask web interface."""
 app.config['SECRET_KEY'] = 'PARALELEPIPEDO'
 
 send_time_delay = 0
+"""Delay in seconds between UDP packet transmissions."""
 
 
 class ActionEnum:
+    """Enumeration of possible user actions triggered from the web interface."""
     remove_festivo = 0
     add_festivo = 1
     remove_horario = 2
@@ -22,14 +25,29 @@ class ActionEnum:
     nothing = 5
 
 DATA_FILE = 'data/data.json'
-TEMPLATE_FILE = 'app/data.default.json'
+"""Path to the active configuration file containing user data."""
 
-# Test values, should be stored in a file with the appropriate retrieve method.
+TEMPLATE_FILE = 'app/data.default.json'
+"""Path to the fallback template used when the active data file is missing."""
+
 class FileSystem:
+    """
+    Handles loading and saving application data to a local JSON file.
+
+    Automatically generates a new data file from a default template if the 
+    target file does not exist upon initialization.
+    """
+
     def __init__(self):
         self.__dict__ = self.load_data()
 
     def load_data(self):
+        """
+        Loads data from the JSON configuration file, creating it if necessary.
+
+        Returns:
+            dict: The application configuration data.
+        """
         if not os.path.exists(DATA_FILE):
             os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
             shutil.copy(TEMPLATE_FILE, DATA_FILE)
@@ -38,14 +56,26 @@ class FileSystem:
             return json.load(file)
 
     def save_data(self):
+        """Saves the current instance dictionary state to the JSON configuration file."""
         with open(DATA_FILE, 'w') as file:
             json.dump(self.__dict__, file, indent=4)
 
 
 File = FileSystem()
+"""Global instance used to access and modify the local JSON configuration."""
+
 def get_data(m_request):
+    """
+    Extracts and structures scheduling and holiday data from the Flask request form.
 
+    Args:
+        m_request (flask.Request): The HTTP request object containing the form data.
 
+    Returns:
+        tuple: A 6-element tuple containing the requested action (ActionEnum), 
+        timetable data (list of dict), holiday data (list of dict), year (int), 
+        month (int), and folder (int).
+    """
     year = int(m_request.form.get('year'))
     month = int(m_request.form.get('month')) + 1
     folder = int(m_request.form.get('folder'))
@@ -80,6 +110,23 @@ def get_data(m_request):
 
 
 def validate_data(horarios_data, fest_data, year, month, folder, is_sending):
+    """
+    Validates and corrects timetable and holiday data before processing or transmission.
+
+    Args:
+        horarios_data (list of dict): The timetable data to validate.
+        fest_data (list of dict): The holiday data to validate.
+        year (int): The selected year.
+        month (int): The selected month.
+        folder (int): The target folder number.
+        is_sending (bool): Indicates if the data is about to be sent via UDP, 
+            triggering stricter filtering such as empty row deletion.
+
+    Returns:
+        tuple: An 8-element tuple containing error messages (list of str), 
+        warning messages (list of str), notification messages (list of str), 
+        and the cleaned timetable data, holiday data, year, month, and folder.
+    """
     error_messages = []
     warning_messages = []
     notification_messages = []
@@ -155,6 +202,16 @@ def validate_data(horarios_data, fest_data, year, month, folder, is_sending):
 
 @app.route('/', methods=['GET', 'POST'])
 def edit_data():
+    """
+    Handles the main web interface for viewing and editing UDP transmission data.
+
+    GET requests render the current configuration loaded from local storage. 
+    POST requests process form submissions, validate the data, update storage, 
+    and optionally trigger UDP network transmissions if the apply action is invoked.
+
+    Returns:
+        werkzeug.wrappers.Response: The rendered HTML template or a redirect response.
+    """
     print('EditData Route')
 
     if request.method == 'GET':
@@ -275,21 +332,25 @@ def edit_data():
 
 @app.route('/favicon.ico')
 def favicon():
+    """Serves the primary favicon for the web interface."""
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
 
 
 @app.route('/apple-touch-icon.ico')
 def apple_icon():
+    """Serves the Apple touch icon for iOS bookmarks."""
     return send_from_directory(os.path.join(app.root_path, 'static', 'static'), 'apple-touch-icon.png')
 
 
 @app.route('/icon')
 def icon():
+    """Serves the standard 32x32 pixel application icon."""
     return send_from_directory(os.path.join(app.root_path, 'static', 'static'), 'favicon-32x32.png')
 
 
 @app.route('/manifest')
 def manifest():
+    """Serves the web application manifest for PWA installation."""
     return send_from_directory(os.path.join(app.root_path, 'static', 'static'), 'site.webmanifest')
 
 
