@@ -1,4 +1,4 @@
-from logic import gen_fol
+from app.logic import gen_fol
 
 
 def test_single_digit():

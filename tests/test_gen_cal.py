@@ -1,4 +1,4 @@
-from logic import gen_cal
+from app.logic import gen_cal
 
 fest = [
     {"st": "2020-01-01", "ed": "2020-01-07"},

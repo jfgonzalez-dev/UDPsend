@@ -1,4 +1,4 @@
-from logic import gen_rep
+from app.logic import gen_vol
 
 timetable1 = [
         {'time': '09:30', 'rep': '30', 'vol': '15'},
@@ -13,9 +13,10 @@ timetable2 = [
     ]
 
 
-def test_rep_in_order():
-    assert gen_rep(timetable1).startswith('T030-045-060') and len(gen_rep(timetable1)) == 84
+def test_vol_in_order():
+    assert gen_vol(timetable1).startswith('V15-10-05') and len(gen_vol(timetable1)) == 63
 
 
-def test_rep_not_order():
-    assert gen_rep(timetable2).startswith('T060-030-045') and len(gen_rep(timetable2)) == 84
+def test_vol_not_order():
+    assert gen_vol(timetable2).startswith('V05-15-10') and len(gen_vol(timetable1)) == 63
+

@@ -1,5 +1,5 @@
 from datetime import datetime
-from logic import gen_now
+from app.logic import gen_now
 
 
 def test_now():

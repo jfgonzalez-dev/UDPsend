@@ -1,8 +1,10 @@
 import os
 
-import logic
+import app.logic as logic
 import json
 import time
+import shutil
+
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 
 app = Flask(__name__)
@@ -18,6 +20,8 @@ class ActionEnum:
     Apply = 4
     Nothing = 5
 
+DATA_FILE = 'data/data.json'
+TEMPLATE_FILE = 'app/data.default.json'
 
 # Test values, should be stored in a file with the appropriate retrieve method.
 class FileSystem:
@@ -25,11 +29,15 @@ class FileSystem:
         self.__dict__ = self.load_data()
 
     def load_data(self):
-        with open('data.json', 'r') as file:
+        if not os.path.exists(DATA_FILE):
+            os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
+            shutil.copy(TEMPLATE_FILE, DATA_FILE)
+
+        with open(DATA_FILE, 'r') as file:
             return json.load(file)
 
     def save_data(self):
-        with open('data.json', 'w') as file:
+        with open(DATA_FILE, 'w') as file:
             json.dump(self.__dict__, file, indent=4)
 
 
