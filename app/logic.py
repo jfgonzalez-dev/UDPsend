@@ -55,13 +55,13 @@ def gen_cal(st_year, st_month, fest):
     """
     month_list = 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'CA', 'CB', 'CC'
     day_list = 'L', 'M', 'X', 'J', 'V', 'S', 'D'
-    _udpCalY = []
+    _udp_cal_y = []
     for i in range(12):
         month_index = (st_month + i - 1) % 12
         cur_year = st_year + (st_month + i - 1) // 12
-        _udpCalM = month_list[month_index]
+        _udp_cal_m = month_list[month_index]
 
-        for day in range(1, 32):  # Días del 1 al 31
+        for day in range(1, 32):  # Days from 1 to 31
             try:
                 _date = datetime(cur_year, month_index + 1, day)
                 _day = day_list[_date.weekday()]
@@ -74,15 +74,15 @@ def gen_cal(st_year, st_month, fest):
                         j['ed'] = j['st']
 
                 if any(datetime.strptime(j['st'], '%Y-%m-%d').date() <= _date.date() <= datetime.strptime(j['ed'], '%Y-%m-%d').date() for j in fest):
-                    _udpCalM += 'F'
+                    _udp_cal_m += 'F'
                 else:
-                    _udpCalM += _day
+                    _udp_cal_m += _day
             except ValueError:
-                pass  # No hacer nada, ya que el día es inválido
+                pass  # Do nothing, since the day is invalid
 
-        _udpCalY.append(_udpCalM.ljust(33, '-'))  # Asegurarse de que el string tenga 33 caracteres
+        _udp_cal_y.append(_udp_cal_m.ljust(33, '-'))  # Ensure the string is exactly 33 characters long
 
-    return _udpCalY
+    return _udp_cal_y
 
 
 def sort_time(timetable):
@@ -109,8 +109,8 @@ def gen_time(timetable):
         Tuple[str, str]: Tupla de 2 cadenas de caracteres: el horario[0] y el nº de tramos[1].
     """
     _time = [i['time'].replace(':', '').zfill(2) for i in sort_time(timetable)]
-    _udpTime = 'H' + '-'.join(_time).ljust(104, '-')
-    return _udpTime, f'N{str(len(_time)).zfill(2)}'
+    _udp_time = 'H' + '-'.join(_time).ljust(104, '-')
+    return _udp_time, f'N{str(len(_time)).zfill(2)}'
 
 
 def gen_rep(timetable):
