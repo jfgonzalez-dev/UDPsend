@@ -5,12 +5,48 @@ email, or any other method with the owners of this repository before making a ch
 
 Please note we have a code of conduct, please follow it in all your interactions with the project.
 
+## Branching Strategies
+
+This repository will follow a branching strategy based on a simplified git flow. Basically, when a
+hotfix, a feature or a refactor is going to be introduced to the codebase, a new branch is ought to
+be created. E.g. I want to add a new language to README.md:
+```sh
+git branch feature/readme-french
+```
+It is inside that branch that you will make the changes that will later be requested to merge into
+main via PR.
+
+## Commit Conventions
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#specification) specification. It is a lightweight convention on top of commit messages. It provides an easy set of rules for creating an explicit commit history; which makes it easier to write automated tools on top of. This convention dovetails with SemVer, by describing the features, fixes, and breaking changes made in commit messages.
+
+The commit message should be structured as follows:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+The commit contains the following structural elements, to communicate intent to the consumers of your library:
+
+1. fix: a commit of the type fix patches a bug in your codebase (this correlates with PATCH in Semantic Versioning).
+2. feat: a commit of the type feat introduces a new feature to the codebase (this correlates with MINOR in Semantic Versioning).
+3. BREAKING CHANGE: a commit that has a footer BREAKING CHANGE:, or appends a ! after the type/scope, introduces a breaking API change (correlating with MAJOR in Semantic Versioning). A BREAKING CHANGE can be part of commits of any type.
+4. types other than fix: and feat: are allowed, for example @commitlint/config-conventional (based on the Angular convention) recommends build:, chore:, ci:, docs:, style:, refactor:, perf:, test:, and others.
+5. footers other than BREAKING CHANGE: <description> may be provided and follow a convention similar to git trailer format.
+
+Additional types are not mandated by the Conventional Commits specification, and have no implicit effect in Semantic Versioning (unless they include a BREAKING CHANGE). A scope may be provided to a commit’s type, to provide additional contextual information and is contained within parenthesis, e.g., feat(parser): add ability to parse arrays.
+
 ## Pull Request Process
 
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a 
-   build.
-2. Update the README.md with details of changes to the interface, this includes new environment 
-   variables, exposed ports, useful file locations and container parameters.
+1. Ensure your code follows the established formatting conventions (e.g., `snake_case` for Python variables and functions).
+2. Update the inline documentation using Google Style docstrings for any newly added or modified logic.
+3. If applicable, regenerate the static HTML documentation using `pdoc -d google -o docs app` and include it in your commit.
+4. Update the `README.md` with details of changes to the user interface, dependencies, or installation instructions.
+5. Provide a clear and descriptive PR message explaining the intent of your changes and wait for a maintainer to review.
 
 ## Code of Conduct
 
